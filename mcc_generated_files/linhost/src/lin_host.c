@@ -37,7 +37,7 @@
 
 #include "../lin_host.h"
 #include "../../uart/eusart1.h"
-#include "../../"
+#include "../../timer/tmr2.h"
 
 static void (*LIN_processData)(void);
 
@@ -93,7 +93,7 @@ void LIN_queuePacket(uint8_t cmd, uint8_t* data){
         }
 
         //Add Checksum
-        LIN_packet.checksum = LIN_getChecksum(LIN_packet.length, LIN_packet.data);
+        LIN_packet.checksum = LIN_getChecksum(LIN_packet.length, LIN_packet.PID, LIN_packet.data);
 
     } else { //Rx packet
         LIN_rxPacket.rxLength = tempSchedule->length; //data length for rx data processing
@@ -122,8 +122,8 @@ lin_state_t LIN_handler(void){
             break;
         case LIN_TX_IP:
             //Transmission currently in progress.
-            if(EUSART1_isTxInterrupt() == 0){
-                if(EUSART1_isTxDone() == 1){
+            /*if(EUSART1_isTxInterrupt() == 0){ Maybe it is not required...*/
+                if(EUSART1_IsTxDone() == 1){
                     //Packet transmitted
                     if(LIN_rxPacket.rxLength > 0){
                         //Need data returned?
@@ -134,7 +134,7 @@ lin_state_t LIN_handler(void){
                         LIN_state = LIN_IDLE;
                     }
                 }
-            }
+            /*}*/
             break;
         case LIN_RX_IP:
             //Receiving Packet within window
@@ -142,7 +142,7 @@ lin_state_t LIN_handler(void){
                 //Timeout
                 LIN_state = LIN_IDLE;
                 memset(LIN_rxPacket.rawPacket, 0, sizeof(LIN_rxPacket.rawPacket));  //clear receive data
-            } else if(EUSART1_is_rx_ready()){
+            } else if(EUSART1_IsRxReady()){
                 if(LIN_receivePacket() == true){
                     //All data received and verified
                     LIN_disableRx();   //disable EUSART rx
@@ -169,7 +169,7 @@ bool LIN_receivePacket(void){
     } else {
         rxIndex = 0;
         //calculate checksum
-        if(EUSART1_Read() == LIN_getChecksum(LIN_rxPacket.rxLength, LIN_rxPacket.data))
+        if(EUSART1_Read() == LIN_getChecksum(LIN_rxPacket.rxLength, LIN_packet.PID, LIN_rxPacket.data))
             return true;
             
     }
@@ -225,8 +225,8 @@ uint8_t LIN_calcParity(uint8_t CMD){
     return PID.rawPID;
 }
 
-uint8_t LIN_getChecksum(uint8_t length, uint8_t* data){
-    uint16_t checksum = 0;
+uint8_t LIN_getChecksum(uint8_t length, uint8_t pid, uint8_t* data){
+    uint16_t checksum = pid;
     
     for (uint8_t i = 0; i < length; i++){
         checksum = checksum + *data++;
@@ -240,8 +240,8 @@ uint8_t LIN_getChecksum(uint8_t length, uint8_t* data){
 
 void LIN_startTimer(uint8_t timeout){
     LIN_timeout = timeout;
-    (0);
-    ();
+    Timer2_Write(0);
+    Timer2_Start();
     LIN_timerRunning = true;
 }
 
@@ -262,7 +262,7 @@ void LIN_timerHandler(void){
 }
 
 void LIN_setTimerHandler(void){
-    (LIN_timerHandler);
+    Timer2_OverflowCallbackRegister(LIN_timerHandler);
 }
 
 void LIN_stopTimer(void){
@@ -282,17 +282,17 @@ void LIN_stopPeriod(void){
 }
 
 void LIN_enableRx(void){
-    EUSART1_enableRx();
-    EUSART1_enableRxInterrupt();
+    EUSART1_ReceiveEnable();
+    EUSART1_ReceiveInterruptEnable();
 }
 
 void LIN_disableRx(void){
-    EUSART1_disableRx();
-    EUSART1_disableRxInterrupt();
+    EUSART1_ReceiveDisable();
+    EUSART1_ReceiveInterruptDisable();
 }
 
 void LIN_sendBreak(void){
-    EUSART1_enableSendBreakControl();
+    EUSART1_SendBreakControlEnable();
 }
 
 void LIN_sendPeriodicTx(void){

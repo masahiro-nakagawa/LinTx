@@ -165,10 +165,10 @@ lin_state_t LIN_handler(void);
  * @ingroup linhost
  * @brief process the linhost module
  *        This return the checksum value.
- * @param length:unsigned 8-bit integer , dataPointer.
+ * @param length:unsigned 8-bit integer, pid:unsigned 8-bit integer , dataPointer.
  * @return unsigned 8-bit integer. 
  */
-uint8_t LIN_getChecksum(uint8_t length, uint8_t* data);
+uint8_t LIN_getChecksum(uint8_t length, uint8_t pid, uint8_t* data);
 
 /**
  * @ingroup linhost

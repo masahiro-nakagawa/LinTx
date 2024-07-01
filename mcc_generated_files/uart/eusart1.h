@@ -200,7 +200,7 @@ void EUSART1_TransmitInterruptDisable(void);
  * @param None.
  * @return None.
  */
-void EUSART1_ReceiveInterruptEnable(void);
+inline void EUSART1_ReceiveInterruptEnable(void);
 
 /**
  * @ingroup eusart1
@@ -208,7 +208,7 @@ void EUSART1_ReceiveInterruptEnable(void);
  * @param None.
  * @return None.
  */
-void EUSART1_ReceiveInterruptDisable(void);
+inline void EUSART1_ReceiveInterruptDisable(void);
 
 /**
  * @ingroup eusart1

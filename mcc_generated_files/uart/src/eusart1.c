@@ -239,7 +239,7 @@ inline void EUSART1_TransmitInterruptDisable(void)
 { 
     PIE3bits.TX1IE = 0; 
 }
-
+              
 inline void EUSART1_ReceiveInterruptEnable(void)
 {
     PIE3bits.RC1IE = 1;
