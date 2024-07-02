@@ -44,7 +44,7 @@
 #include "../timer/tmr2.h"
 #include "../system/interrupt.h"
 #include "../system/clock.h"
-
+#include "../linhost/lin_app.h"
 /**
  * @ingroup systemdriver
  * @brief Initializes the system module.

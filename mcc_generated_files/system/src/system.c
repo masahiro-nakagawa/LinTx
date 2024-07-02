@@ -41,6 +41,7 @@ void SYSTEM_Initialize(void)
     PIN_MANAGER_Initialize();
     EUSART1_Initialize();
     TMR2_Initialize();
+    LIN_Host_Initialize();
     INTERRUPT_Initialize();
 }
 
