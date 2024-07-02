@@ -35,7 +35,7 @@
 /*
     Main application
 */
-extern uint8_t MasterSwitch_Data[1];
+//extern uint8_t MasterSwitch_Data[1];
 int main(void)
 {
     SYSTEM_Initialize();
