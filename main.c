@@ -11,7 +11,7 @@
 */
 
 /*
-© [2024] Microchip Technology Inc. and its subsidiaries.
+ï¿½ [2024] Microchip Technology Inc. and its subsidiaries.
 
     Subject to your compliance with these terms, you may use Microchip 
     software and any derivatives exclusively with Microchip products. 
@@ -35,7 +35,7 @@
 /*
     Main application
 */
-
+extern uint8_t MasterSwitch_Data[1];
 int main(void)
 {
     SYSTEM_Initialize();
@@ -59,5 +59,12 @@ int main(void)
 
     while(1)
     {
+        LIN_handler();
+
+        if(PORTBbits.RB5 == HIGH){
+            MasterSwitch_Data[0] = 0x01;
+        }else{
+            MasterSwitch_Data[0] = 0x00;
+        }
     }    
 }
